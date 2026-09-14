@@ -27,7 +27,10 @@
 
     header { width: 100%; max-width: 500px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     h1 { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
-    .reset-btn { background: transparent; border: 1px solid var(--text-muted); color: var(--text-muted); padding: 6px 12px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; }
+    
+    .header-actions { display: flex; gap: 8px; }
+    .header-btn { background: transparent; border: 1px solid var(--text-muted); color: var(--text-muted); padding: 6px 10px; border-radius: 8px; font-size: 0.8rem; cursor: pointer; }
+    .header-btn-danger { border-color: var(--minus); color: var(--minus); }
 
     .input-group { width: 100%; max-width: 500px; display: flex; gap: 8px; margin-bottom: 20px; }
     input[type="text"], input[type="number"] { background: var(--card-bg); border: 1px solid var(--border); padding: 12px 16px; border-radius: 12px; color: var(--text); font-size: 1rem; outline: none; }
@@ -42,27 +45,25 @@
     .player-name { font-size: 1.2rem; font-weight: 600; }
     .player-score { font-size: 2rem; font-weight: 700; color: var(--accent); }
 
-    .card-controls { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
-    
-    .quick-btns { display: flex; gap: 6px; }
-    .btn { width: 40px; height: 40px; border-radius: 10px; border: none; font-size: 1.2rem; font-weight: bold; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-    .btn-minus { background-color: var(--minus); }
-    .btn-plus { background-color: var(--plus); }
+    .card-controls { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 
-    .custom-input-group { display: flex; gap: 6px; align-items: center; }
-    .custom-score-input { width: 70px; height: 40px; text-align: center; font-size: 0.95rem; padding: 4px; border-radius: 8px; }
-    .btn-custom { height: 40px; padding: 0 10px; border-radius: 8px; border: none; font-size: 0.85rem; font-weight: 600; color: white; cursor: pointer; }
-    .btn-custom-sub { background-color: #dc2626; }
-    .btn-custom-add { background-color: #16a34a; }
+    .custom-input-group { display: flex; gap: 6px; align-items: center; flex: 1; }
+    .custom-score-input { width: 80px; height: 42px; text-align: center; font-size: 1rem; padding: 4px; border-radius: 8px; }
+    .btn-custom { height: 42px; padding: 0 14px; border-radius: 8px; border: none; font-size: 0.9rem; font-weight: 600; color: white; cursor: pointer; flex: 1; }
+    .btn-custom-sub { background-color: var(--minus); }
+    .btn-custom-add { background-color: var(--plus); }
 
-    .btn-delete { background: transparent; border: none; color: var(--text-muted); font-size: 1.2rem; padding: 4px 8px; cursor: pointer; }
+    .btn-delete { background: transparent; border: none; color: var(--text-muted); font-size: 0.85rem; padding: 6px 8px; cursor: pointer; text-decoration: underline; }
   </style>
 </head>
 <body>
 
   <header>
     <h1>ScoreKeeper</h1>
-    <button class="reset-btn" onclick="resetScores()">Reset Scores</button>
+    <div class="header-actions">
+      <button class="header-btn" onclick="resetScores()">Reset Scores</button>
+      <button class="header-btn header-btn-danger" onclick="resetGame()">Reset Game</button>
+    </div>
   </header>
 
   <div class="input-group">
@@ -89,18 +90,12 @@
             <span class="player-score">${player.score}</span>
           </div>
           <div class="card-controls">
-            <div class="quick-btns">
-              <button class="btn btn-minus" onclick="updateScore(${index}, -1)">-1</button>
-              <button class="btn btn-plus" onclick="updateScore(${index}, 1)">+1</button>
-            </div>
-            
             <div class="custom-input-group">
               <input type="number" id="custom-${index}" class="custom-score-input" placeholder="Pts" min="1">
               <button class="btn-custom btn-custom-sub" onclick="applyCustomScore(${index}, -1)">- Sub</button>
               <button class="btn-custom btn-custom-add" onclick="applyCustomScore(${index}, 1)">+ Add</button>
             </div>
-
-            <button class="btn-delete" onclick="removePlayer(${index})">✕</button>
+            <button class="btn-delete" onclick="removePlayer(${index})">Delete</button>
           </div>
         `;
         listContainer.appendChild(card);
@@ -121,11 +116,6 @@
       if (e.key === 'Enter') addPlayer();
     }
 
-    function updateScore(index, delta) {
-      players[index].score += delta;
-      saveAndRender();
-    }
-
     function applyCustomScore(index, multiplier) {
       const input = document.getElementById(`custom-${index}`);
       const val = parseInt(input.value, 10);
@@ -136,13 +126,22 @@
     }
 
     function removePlayer(index) {
-      players.splice(index, 1);
-      saveAndRender();
+      if (confirm(`Delete ${players[index].name}?`)) {
+        players.splice(index, 1);
+        saveAndRender();
+      }
     }
 
     function resetScores() {
-      if (confirm('Reset all scores to zero?')) {
+      if (confirm('Reset all player scores to zero?')) {
         players.forEach(p => p.score = 0);
+        saveAndRender();
+      }
+    }
+
+    function resetGame() {
+      if (confirm('Remove all players and reset the entire game?')) {
+        players = [];
         saveAndRender();
       }
     }
