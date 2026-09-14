@@ -23,37 +23,65 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; }
-    body { background-color: var(--bg-color); color: var(--text); padding: 20px; padding-top: calc(20px + env(safe-area-inset-top)); min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+    body { background-color: var(--bg-color); color: var(--text); padding: 16px; padding-top: calc(16px + env(safe-area-inset-top)); min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
 
-    header { width: 100%; max-width: 500px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    h1 { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+    header { width: 100%; max-width: 500px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    h1 { font-size: 1.4rem; font-weight: 700; color: var(--accent); }
     
-    .header-actions { display: flex; gap: 8px; }
-    .header-btn { background: transparent; border: 1px solid var(--text-muted); color: var(--text-muted); padding: 6px 10px; border-radius: 8px; font-size: 0.8rem; cursor: pointer; }
+    .header-actions { display: flex; gap: 6px; }
+    .header-btn { background: transparent; border: 1px solid var(--text-muted); color: var(--text-muted); padding: 6px 8px; border-radius: 8px; font-size: 0.75rem; cursor: pointer; }
     .header-btn-danger { border-color: var(--minus); color: var(--minus); }
 
-    .input-group { width: 100%; max-width: 500px; display: flex; gap: 8px; margin-bottom: 20px; }
-    input[type="text"], input[type="number"] { background: var(--card-bg); border: 1px solid var(--border); padding: 12px 16px; border-radius: 12px; color: var(--text); font-size: 1rem; outline: none; }
+    .tools-panel { width: 100%; max-width: 500px; background: var(--card-bg); border-radius: 12px; padding: 12px; margin-bottom: 16px; display: flex; flex-direction: column; gap: 12px; border: 1px solid var(--border); }
+    
+    /* Stats Dropdown */
+    details summary { font-weight: 600; color: var(--accent); cursor: pointer; outline: none; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+    details summary::-webkit-details-marker { display: none; }
+    details summary::after { content: "▼"; font-size: 0.7rem; transition: transform 0.2s; }
+    details[open] summary::after { transform: rotate(180deg); }
+    
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+    .stat-card { background: var(--bg-color); padding: 8px; border-radius: 8px; text-align: center; }
+    .stat-label { font-size: 0.75rem; color: var(--text-muted); }
+    .stat-value { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+
+    /* Widgets Bar */
+    .widgets-bar { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .timer-display { font-family: monospace; font-size: 1.1rem; font-weight: bold; background: var(--bg-color); padding: 4px 8px; border-radius: 6px; }
+    .tool-btn { background: var(--border); color: var(--text); border: none; padding: 6px 10px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+
+    /* Dice & Picker Output */
+    .tool-output { background: var(--bg-color); border-radius: 8px; padding: 8px; text-align: center; font-size: 0.9rem; font-weight: 600; color: var(--accent); display: none; }
+
+    /* Controls & Sorting */
+    .controls-row { width: 100%; max-width: 500px; display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .sort-group { display: flex; gap: 4px; }
+    .sort-btn { background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; }
+    .sort-btn.active { background: var(--border); color: var(--text); }
+
+    .input-group { width: 100%; max-width: 500px; display: flex; gap: 8px; margin-bottom: 16px; }
+    input[type="text"], input[type="number"] { background: var(--card-bg); border: 1px solid var(--border); padding: 10px 14px; border-radius: 10px; color: var(--text); font-size: 0.95rem; outline: none; }
     input[type="text"] { flex: 1; }
     input[type="text"]::placeholder, input[type="number"]::placeholder { color: var(--text-muted); }
-    .add-btn { background: var(--accent); color: #0f172a; border: none; padding: 0 20px; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; }
+    .add-btn { background: var(--accent); color: #0f172a; border: none; padding: 0 16px; border-radius: 10px; font-weight: 600; font-size: 0.95rem; cursor: pointer; }
 
     .player-list { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 12px; }
-    .player-card { background: var(--card-bg); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2); }
+    .player-card { background: var(--card-bg); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2); transition: border 0.2s; }
+    .player-card.highlight { border: 2px solid var(--accent); }
     
     .card-top { display: flex; justify-content: space-between; align-items: center; }
-    .player-name { font-size: 1.2rem; font-weight: 600; }
-    .player-score { font-size: 2rem; font-weight: 700; color: var(--accent); }
+    .player-name { font-size: 1.1rem; font-weight: 600; }
+    .player-score { font-size: 1.8rem; font-weight: 700; color: var(--accent); }
 
     .card-controls { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 
     .custom-input-group { display: flex; gap: 6px; align-items: center; flex: 1; }
-    .custom-score-input { width: 80px; height: 42px; text-align: center; font-size: 1rem; padding: 4px; border-radius: 8px; }
-    .btn-custom { height: 42px; padding: 0 14px; border-radius: 8px; border: none; font-size: 0.9rem; font-weight: 600; color: white; cursor: pointer; flex: 1; }
+    .custom-score-input { width: 70px; height: 38px; text-align: center; font-size: 0.95rem; padding: 4px; border-radius: 8px; }
+    .btn-custom { height: 38px; padding: 0 12px; border-radius: 8px; border: none; font-size: 0.85rem; font-weight: 600; color: white; cursor: pointer; flex: 1; }
     .btn-custom-sub { background-color: var(--minus); }
     .btn-custom-add { background-color: var(--plus); }
 
-    .btn-delete { background: transparent; border: none; color: var(--text-muted); font-size: 0.85rem; padding: 6px 8px; cursor: pointer; text-decoration: underline; }
+    .btn-delete { background: transparent; border: none; color: var(--text-muted); font-size: 0.8rem; padding: 6px 8px; cursor: pointer; text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -66,6 +94,56 @@
     </div>
   </header>
 
+  <div class="tools-panel">
+    <!-- Stats Dropdown -->
+    <details>
+      <summary>Game Statistics</summary>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Points</div>
+          <div class="stat-value" id="statTotal">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Average Score</div>
+          <div class="stat-value" id="statAvg">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Highest Score</div>
+          <div class="stat-value" id="statHigh">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Lowest Score</div>
+          <div class="stat-value" id="statLow">-</div>
+        </div>
+      </div>
+    </details>
+
+    <!-- Timer and Tools Bar -->
+    <div class="widgets-bar">
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <span class="timer-display" id="timerDisplay">00:00</span>
+        <button class="tool-btn" id="timerBtn" onclick="toggleTimer()">Start</button>
+        <button class="tool-btn" onclick="resetTimer()">Reset</button>
+      </div>
+      <div>
+        <button class="tool-btn" onclick="pickRandomPlayer()">🎲 Pick Player</button>
+        <button class="tool-btn" onclick="rollDice()">🎲 Roll 2x Die</button>
+      </div>
+    </div>
+
+    <!-- Output display for dice roll or player picker -->
+    <div class="tool-output" id="toolOutput"></div>
+  </div>
+
+  <div class="controls-row">
+    <span style="font-size: 0.85rem; color: var(--text-muted);">Sort Players:</span>
+    <div class="sort-group">
+      <button class="sort-btn active" id="sortDefault" onclick="setSort('default')">Default</button>
+      <button class="sort-btn" id="sortHigh" onclick="setSort('high')">High → Low</button>
+      <button class="sort-btn" id="sortLow" onclick="setSort('low')">Low → High</button>
+    </div>
+  </div>
+
   <div class="input-group">
     <input type="text" id="playerName" placeholder="Enter player name..." onkeypress="handleKeyPress(event)">
     <button class="add-btn" onclick="addPlayer()">Add</button>
@@ -75,15 +153,32 @@
 
   <script>
     let players = JSON.parse(localStorage.getItem('keepscore_players')) || [];
+    let currentSort = 'default';
+    
+    // Timer state
+    let timerInterval = null;
+    let timerSeconds = 0;
 
     function saveAndRender() {
       localStorage.setItem('keepscore_players', JSON.stringify(players));
+      renderStats();
+
       const listContainer = document.getElementById('playerList');
       listContainer.innerHTML = '';
 
-      players.forEach((player, index) => {
+      let displayPlayers = [...players].map((p, index) => ({ ...p, originalIndex: index }));
+
+      if (currentSort === 'high') {
+        displayPlayers.sort((a, b) => b.score - a.score);
+      } else if (currentSort === 'low') {
+        displayPlayers.sort((a, b) => a.score - b.score);
+      }
+
+      displayPlayers.forEach((player) => {
+        const index = player.originalIndex;
         const card = document.createElement('div');
         card.className = 'player-card';
+        card.id = `player-card-${index}`;
         card.innerHTML = `
           <div class="card-top">
             <span class="player-name">${escapeHtml(player.name)}</span>
@@ -100,6 +195,37 @@
         `;
         listContainer.appendChild(card);
       });
+    }
+
+    function renderStats() {
+      if (players.length === 0) {
+        document.getElementById('statTotal').innerText = '0';
+        document.getElementById('statAvg').innerText = '0';
+        document.getElementById('statHigh').innerText = '-';
+        document.getElementById('statLow').innerText = '-';
+        return;
+      }
+
+      const total = players.reduce((sum, p) => sum + p.score, 0);
+      const avg = (total / players.length).toFixed(1);
+      
+      const sortedByScore = [...players].sort((a, b) => b.score - a.score);
+      const highest = sortedByScore[0];
+      const lowest = sortedByScore[sortedByScore.length - 1];
+
+      document.getElementById('statTotal').innerText = total;
+      document.getElementById('statAvg').innerText = avg;
+      document.getElementById('statHigh').innerText = `${highest.name} (${highest.score})`;
+      document.getElementById('statLow').innerText = `${lowest.name} (${lowest.score})`;
+    }
+
+    function setSort(mode) {
+      currentSort = mode;
+      document.querySelectorAll('.sort-btn').forEach(btn => btn.classList.remove('active'));
+      if (mode === 'default') document.getElementById('sortDefault').classList.add('active');
+      if (mode === 'high') document.getElementById('sortHigh').classList.add('active');
+      if (mode === 'low') document.getElementById('sortLow').classList.add('active');
+      saveAndRender();
     }
 
     function addPlayer() {
@@ -142,8 +268,65 @@
     function resetGame() {
       if (confirm('Remove all players and reset the entire game?')) {
         players = [];
+        resetTimer();
         saveAndRender();
       }
+    }
+
+    /* Tool Functions */
+    function toggleTimer() {
+      const btn = document.getElementById('timerBtn');
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        btn.innerText = 'Start';
+      } else {
+        timerInterval = setInterval(() => {
+          timerSeconds++;
+          const mins = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
+          const secs = String(timerSeconds % 60).padStart(2, '0');
+          document.getElementById('timerDisplay').innerText = `${mins}:${secs}`;
+        }, 1000);
+        btn.innerText = 'Pause';
+      }
+    }
+
+    function resetTimer() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+      timerSeconds = 0;
+      document.getElementById('timerDisplay').innerText = '00:00';
+      document.getElementById('timerBtn').innerText = 'Start';
+    }
+
+    function pickRandomPlayer() {
+      const output = document.getElementById('toolOutput');
+      if (players.length === 0) {
+        output.style.display = 'block';
+        output.innerText = 'Add players first!';
+        return;
+      }
+      
+      document.querySelectorAll('.player-card').forEach(c => c.classList.remove('highlight'));
+      
+      const randomIndex = Math.floor(Math.random() * players.length);
+      const chosenPlayer = players[randomIndex];
+      
+      output.style.display = 'block';
+      output.innerText = `Selected Player: ${chosenPlayer.name}`;
+      
+      const card = document.getElementById(`player-card-${randomIndex}`);
+      if (card) card.classList.add('highlight');
+    }
+
+    function rollDice() {
+      const output = document.getElementById('toolOutput');
+      const die1 = Math.floor(Math.random() * 6) + 1;
+      const die2 = Math.floor(Math.random() * 6) + 1;
+      output.style.display = 'block';
+      output.innerText = `Dice Roll: [ ${die1} ] + [ ${die2} ] = ${die1 + die2}`;
     }
 
     function escapeHtml(text) {
