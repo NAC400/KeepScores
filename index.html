@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>ScoreKeeper</title>
+  
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ScoreKeeper">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23007AFF'/><text x='50' y='68' font-size='55' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'>💯</text></svg>">
+
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --accent: #38bdf8;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --plus: #22c55e;
+      --minus: #ef4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; }
+    body { background-color: var(--bg-color); color: var(--text); padding: 20px; padding-top: calc(20px + env(safe-area-inset-top)); min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+
+    header { width: 100%; max-width: 500px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    h1 { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+    .reset-btn { background: transparent; border: 1px solid var(--text-muted); color: var(--text-muted); padding: 6px 12px; border-radius: 8px; font-size: 0.85rem; }
+
+    .input-group { width: 100%; max-width: 500px; display: flex; gap: 8px; margin-bottom: 20px; }
+    input[type="text"] { flex: 1; background: var(--card-bg); border: 1px solid #334155; padding: 12px 16px; border-radius: 12px; color: var(--text); font-size: 1rem; outline: none; }
+    input[type="text"]::placeholder { color: var(--text-muted); }
+    .add-btn { background: var(--accent); color: #0f172a; border: none; padding: 0 20px; border-radius: 12px; font-weight: 600; font-size: 1rem; }
+
+    .player-list { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 12px; }
+    .player-card { background: var(--card-bg); border-radius: 16px; padding: 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2); }
+    
+    .player-info { display: flex; flex-direction: column; gap: 4px; }
+    .player-name { font-size: 1.1rem; font-weight: 600; }
+    .player-score { font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+
+    .controls { display: flex; align-items: center; gap: 8px; }
+    .btn { width: 44px; height: 44px; border-radius: 12px; border: none; font-size: 1.4rem; font-weight: bold; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .btn-minus { background-color: var(--minus); }
+    .btn-plus { background-color: var(--plus); }
+    .btn-delete { background: transparent; border: none; color: var(--text-muted); font-size: 1rem; margin-left: 8px; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>ScoreKeeper</h1>
+    <button class="reset-btn" onclick="resetScores()">Reset Scores</button>
+  </header>
+
+  <div class="input-group">
+    <input type="text" id="playerName" placeholder="Enter player name..." onkeypress="handleKeyPress(event)">
+    <button class="add-btn" onclick="addPlayer()">Add</button>
+  </div>
+
+  <div class="player-list" id="playerList"></div>
+
+  <script>
+    let players = JSON.parse(localStorage.getItem('keepscore_players')) || [];
+
+    function saveAndRender() {
+      localStorage.setItem('keepscore_players', JSON.stringify(players));
+      const listContainer = document.getElementById('playerList');
+      listContainer.innerHTML = '';
+
+      players.forEach((player, index) => {
+        const card = document.createElement('div');
+        card.className = 'player-card';
+        card.innerHTML = `
+          <div class="player-info">
+            <span class="player-name">${escapeHtml(player.name)}</span>
+            <span class="player-score">${player.score}</span>
+          </div>
+          <div class="controls">
+            <button class="btn btn-minus" onclick="updateScore(${index}, -1)">-</button>
+            <button class="btn btn-plus" onclick="updateScore(${index}, 1)">+</button>
+            <button class="btn-delete" onclick="removePlayer(${index})">✕</button>
+          </div>
+        `;
+        listContainer.appendChild(card);
+      });
+    }
+
+    function addPlayer() {
+      const input = document.getElementById('playerName');
+      const name = input.value.trim();
+      if (name) {
+        players.push({ name: name, score: 0 });
+        input.value = '';
+        saveAndRender();
+      }
+    }
+
+    function handleKeyPress(e) {
+      if (e.key === 'Enter') addPlayer();
+    }
+
+    function updateScore(index, delta) {
+      players[index].score += delta;
+      saveAndRender();
+    }
+
+    function removePlayer(index) {
+      players.splice(index, 1);
+      saveAndRender();
+    }
+
+    function resetScores() {
+      if (confirm('Reset all scores to zero?')) {
+        players.forEach(p => p.score = 0);
+        saveAndRender();
+      }
+    }
+
+    function escapeHtml(text) {
+      return text.replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+      });
+    }
+
+    saveAndRender();
+  </script>
+</body>
+</html>
